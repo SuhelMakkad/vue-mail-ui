@@ -30,7 +30,9 @@
     </tr>
   </table>
 
-  <MailView v-if="openedEmail" :email="openedEmail" />
+  <ModalView v-if="openedEmail" @closeModal="openedEmail = null">
+    <MailView :email="openedEmail" />
+  </ModalView>
 </template>
 
 <script>
@@ -38,9 +40,10 @@ import { ref } from "vue";
 import axios from "axios";
 
 import MailView from "./MailView.vue";
+import ModalView from "./ModalView.vue";
 
 export default {
-  components: { MailView },
+  components: { MailView, ModalView },
 
   async setup() {
     const res = await axios.get("/assets/dummy-data/dummy-data.json");

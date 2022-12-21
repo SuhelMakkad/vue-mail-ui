@@ -8,7 +8,7 @@
       <em>From {{ email.from }} on {{ new Intl.DateTimeFormat("en-US").format(new Date(email.sentAt)) }}</em>
     </div>
 
-    <div>{{ email.body }}</div>
+    <div class="mt-4">{{ email.body }}</div>
   </div>
 </template>
 

@@ -79,6 +79,10 @@ input[type="checkbox"]:checked {
   margin-bottom: 0;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 /* Modal */
 
 .modal,
