@@ -3,7 +3,7 @@
     <tr
       v-for="email in unArchivedEmails"
       :key="email.id"
-      @click="readEmail(email)"
+      @click="openEmail(email)"
       class="clickable"
       :class="{
         read: email.read,
@@ -29,34 +29,41 @@
       </td>
     </tr>
   </table>
+
+  <MailView v-if="openedEmail" :email="openedEmail" />
 </template>
 
 <script>
-import axios from "axios";
 import { ref } from "vue";
+import axios from "axios";
+
+import MailView from "./MailView.vue";
 
 export default {
-  async setup() {
-    const { data: emails } = await axios.get("/assets/dummy-data/dummy-data.json");
+  components: { MailView },
 
-    return { emails: ref(emails) };
+  async setup() {
+    const res = await axios.get("/assets/dummy-data/dummy-data.json");
+    const emails = ref(res.data);
+    const openedEmail = ref(null);
+
+    return { emails, openedEmail };
   },
 
   computed: {
     sortedEmail() {
       return this.emails?.sort((e1, e2) => (e1.sentAt < e2.sentAt ? 1 : -1));
     },
-
     unArchivedEmails() {
       return this.emails?.filter((email) => !email.archived);
     },
   },
 
   methods: {
-    readEmail(email) {
+    openEmail(email) {
       email.read = true;
+      this.openedEmail = email;
     },
-
     archiveEmail(email) {
       email.archived = true;
     },
