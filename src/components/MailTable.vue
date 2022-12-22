@@ -48,11 +48,11 @@ export default {
   setup(props, { emit }) {
     const emailSelection = useEmailSelection();
 
-    const openEmail = () => {
+    const openEmail = (email) => {
       emit("openEmail", email);
     };
 
-    const archiveEmail = () => {
+    const archiveEmail = (email) => {
       emit("archiveEmail", email);
     };
 
