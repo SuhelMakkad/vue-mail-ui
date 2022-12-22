@@ -3,7 +3,7 @@
 
   <Suspense>
     <template #default>
-      <MailTable />
+      <MainContent />
     </template>
 
     <template #fallback> Loading... </template>
@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import MailTable from "./components/MailTable.vue";
+import MainContent from "./components/MainContent.vue";
 
 export default {
   name: "App",
-  components: { MailTable },
+  components: { MainContent },
 };
 </script>
 
