@@ -31,7 +31,7 @@
   </table>
 
   <ModalView v-if="openedEmail" @closeModal="openedEmail = null">
-    <MailView :email="openedEmail" />
+    <MailView :email="openedEmail" @changeEmail="changeEmail" />
   </ModalView>
 </template>
 
@@ -57,6 +57,7 @@ export default {
     sortedEmail() {
       return this.emails?.sort((e1, e2) => (e1.sentAt < e2.sentAt ? 1 : -1));
     },
+
     unArchivedEmails() {
       return this.emails?.filter((email) => !email.archived);
     },
@@ -64,11 +65,40 @@ export default {
 
   methods: {
     openEmail(email) {
-      email.read = true;
       this.openedEmail = email;
+
+      if (email) {
+        email.read = true;
+      }
     },
+
     archiveEmail(email) {
       email.archived = true;
+    },
+
+    changeEmail({ toggleRead, toggleArchive, changeIndex, closeModal }) {
+      const emails = this.unArchivedEmails;
+      const email = this.openedEmail;
+
+      if (toggleRead) {
+        email.read = !email.read;
+      }
+
+      if (toggleArchive) {
+        email.archive = !email.archive;
+      }
+
+      if (closeModal) {
+        this.openedEmail = null;
+      }
+
+      if (changeIndex) {
+        const currIndex = emails.findIndex((e) => e.id === email.id);
+        const nextIndex = currIndex + changeIndex;
+        console.log({ currIndex, changeIndex, nextIndex });
+
+        this.openEmail(emails[nextIndex]);
+      }
     },
   },
 };
