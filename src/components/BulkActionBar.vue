@@ -1,13 +1,33 @@
 <template lang="">
-  <div>
-    <input
-      type="checkbox"
-      @click="bulkSelect"
-      :checked="allEmailsSelected"
-      :class="{
-        'partial-check': someEmailsSelected,
-      }"
-    />
+  <div class="bulk-action-bar">
+    <span class="checkbox">
+      <input
+        type="checkbox"
+        @click="bulkSelect"
+        :checked="allEmailsSelected"
+        :class="{
+          'partial-check': someEmailsSelected,
+        }"
+      />
+    </span>
+
+    <span class="buttons">
+      <button
+        @click="emailSelection.markRead()"
+        :disabled="[...emailSelection.emails].every((e) => e.read)"
+      >
+        Mark Read
+      </button>
+
+      <button
+        @click="emailSelection.markUnread()"
+        :disabled="[...emailSelection.emails].every((e) => !e.read)"
+      >
+        Mark Unread
+      </button>
+
+      <button @click="emailSelection.archive()" :disabled="!selectedEmailsCount">Archive</button>
+    </span>
   </div>
 </template>
 
@@ -23,7 +43,7 @@ export default {
     },
   },
 
-  setup({emails}) {
+  setup({ emails }) {
     const emailSelection = useEmailSelection();
 
     const selectedEmailsCount = computed(() => emailSelection.emails.size);
@@ -35,16 +55,17 @@ export default {
     );
 
     const bulkSelect = () => {
-        console.log(allEmailsSelected.value);
       if (allEmailsSelected.value) {
         emailSelection.clear();
       } else {
-        emailSelection.addMultiple(emails)
+        emailSelection.addMultiple(emails);
       }
     };
 
     return {
+      emailSelection,
       bulkSelect,
+      selectedEmailsCount,
       allEmailsSelected,
       someEmailsSelected,
     };

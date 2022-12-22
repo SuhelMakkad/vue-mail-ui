@@ -31,7 +31,7 @@
         {{ new Intl.DateTimeFormat("en-US").format(new Date(email.sentAt)) }}
       </td>
       <td>
-        <button @click="archiveEmail(email)">Archive</button>
+        <button @click.stop="archiveEmail(email)">Archive</button>
       </td>
     </tr>
   </table>
@@ -105,7 +105,6 @@ export default {
       if (changeIndex) {
         const currIndex = emails.findIndex((e) => e.id === email.id);
         const nextIndex = currIndex + changeIndex;
-        console.log({ currIndex, changeIndex, nextIndex });
 
         this.openEmail(emails[nextIndex]);
       }
