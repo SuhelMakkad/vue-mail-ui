@@ -30,7 +30,7 @@ export default {
   async setup() {
     const emailSelection = useEmailSelection();
 
-    const res = await axios.get("/assets/dummy-data/dummy-data.json");
+    const res = await axios.get("/vue-mail-ui/assets/dummy-data/dummy-data.json");
     const emails = ref(res.data);
     const openedEmail = ref(null);
     const selectedScreen = ref("inbox");
