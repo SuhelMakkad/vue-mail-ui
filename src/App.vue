@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import MailTable from './components/MailTable.vue';
+import MailTable from "./components/MailTable.vue";
 
 export default {
-    name: "App",
-    components: { MailTable }
+  name: "App",
+  components: { MailTable },
 };
 </script>
 

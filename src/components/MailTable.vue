@@ -44,8 +44,10 @@
 </template>
 
 <script>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 import axios from "axios";
+
+import useEmailSelection from "../composables/use-email-selection"
 
 import MailView from "./MailView.vue";
 import ModalView from "./ModalView.vue";
@@ -59,20 +61,7 @@ export default {
     const emails = ref(res.data);
     const openedEmail = ref(null);
 
-    const selectedEmails = reactive(new Set());
-
-    const emailSelection = {
-      emails: selectedEmails,
-      toggle(email) {
-        if (selectedEmails.has(email)) {
-          selectedEmails.delete(email);
-        } else {
-          selectedEmails.add(email);
-        }
-      },
-    };
-
-    return { emails, openedEmail, emailSelection };
+    return { emailSelection: useEmailSelection(), emails, openedEmail,  };
   },
 
   computed: {
