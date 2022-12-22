@@ -1,6 +1,8 @@
 <template>
   <button @click="selectScreen('inbox')" :disabled="selectedScreen === 'inbox'">Inbox</button>
-  <button @click="selectScreen('archive')" :disabled="selectedScreen === 'archive'">Archived</button>
+  <button @click="selectScreen('archive')" :disabled="selectedScreen === 'archive'">
+    Archived
+  </button>
 
   <BulkActionBar :emails="filteredEmails" />
 
@@ -45,7 +47,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import axios from "axios";
 
 import useEmailSelection from "../composables/use-email-selection";
@@ -58,55 +60,43 @@ export default {
   components: { BulkActionBar, MailView, ModalView },
 
   async setup() {
-    const res = await axios.get("/assets/dummy-data/dummy-data.json");
+    const emailSelection = useEmailSelection();
 
+    const res = await axios.get("/assets/dummy-data/dummy-data.json");
     const emails = ref(res.data);
     const openedEmail = ref(null);
     const selectedScreen = ref("inbox");
 
-    return {
-      emailSelection: useEmailSelection(),
-      emails,
-      openedEmail,
-      selectedScreen,
+    const sortedEmail = computed(() =>
+      emails.value.sort((e1, e2) => (e1.sentAt < e2.sentAt ? 1 : -1))
+    );
+
+    const filteredEmails = computed(() =>
+      emails.value.filter((email) =>
+        selectedScreen.value === "archive" ? email.archived : !email.archived
+      )
+    );
+
+    const selectScreen = (screen) => {
+      selectedScreen.value = screen;
+      emailSelection.clear();
     };
-  },
 
-  computed: {
-    sortedEmail() {
-      return this.emails?.sort((e1, e2) => (e1.sentAt < e2.sentAt ? 1 : -1));
-    },
-
-    filteredEmails() {
-      if (this.selectedScreen === "archive") {
-        return this.emails?.filter((email) => email.archived);
-      }
-
-      return this.emails?.filter((email) => !email.archived);
-    },
-  },
-
-  methods: {
-    selectScreen(screen) {
-      this.selectedScreen = screen
-      this.emailSelection.clear()
-    },
-
-    openEmail(email) {
-      this.openedEmail = email;
+    const openEmail = (email) => {
+      openedEmail.value = email;
 
       if (email) {
         email.read = true;
       }
-    },
+    };
 
-    archiveEmail(email) {
+    const archiveEmail = (email) => {
       email.archived = true;
-    },
+    };
 
-    changeEmail({ toggleRead, toggleArchive, changeIndex, closeModal }) {
-      const emails = this.filteredEmails;
-      const email = this.openedEmail;
+    const changeEmail = ({ toggleRead, toggleArchive, changeIndex, closeModal }) => {
+      const emails = filteredEmails.value;
+      const email = openedEmail.value;
 
       if (toggleRead) {
         email.read = !email.read;
@@ -117,16 +107,29 @@ export default {
       }
 
       if (closeModal) {
-        this.openedEmail = null;
+        openedEmail.value = null;
       }
 
       if (changeIndex) {
         const currIndex = emails.findIndex((e) => e.id === email.id);
         const nextIndex = currIndex + changeIndex;
 
-        this.openEmail(emails[nextIndex]);
+        openEmail(emails[nextIndex]);
       }
-    },
+    };
+
+    return {
+      emailSelection,
+      sortedEmail,
+      filteredEmails,
+      emails,
+      openedEmail,
+      selectedScreen,
+      selectScreen,
+      openEmail,
+      archiveEmail,
+      changeEmail,
+    };
   },
 };
 </script>
