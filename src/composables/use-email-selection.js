@@ -29,8 +29,14 @@ const useEmailSelection = () => {
 
   const markRead = () => forSelected((email) => (email.read = true));
   const markUnread = () => forSelected((email) => (email.read = false));
+  
   const archive = () => {
     forSelected((email) => (email.archived = true));
+    clear();
+  };
+  const unarchive = () => {
+    forSelected((email) => (email.archived = false));
+    forSelected((email) => console.log(email.archived));
     clear();
   };
 
@@ -42,6 +48,7 @@ const useEmailSelection = () => {
     markRead,
     markUnread,
     archive,
+    unarchive,
   };
 };
 

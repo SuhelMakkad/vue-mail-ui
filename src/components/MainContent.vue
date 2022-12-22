@@ -4,7 +4,7 @@
     Archived
   </button>
 
-  <BulkActionBar :emails="filteredEmails" />
+  <BulkActionBar :emails="filteredEmails" :screen="selectedScreen" />
 
   <MailTable :emails="filteredEmails" @openEmail="openEmail" @archiveEmail="archiveEmail" />
 
@@ -71,7 +71,7 @@ export default {
       }
 
       if (toggleArchive) {
-        email.archive = !email.archive;
+        email.archived = !email.archived;
       }
 
       if (closeModal) {

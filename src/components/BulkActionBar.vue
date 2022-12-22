@@ -26,30 +26,37 @@
         Mark Unread
       </button>
 
-      <button @click="emailSelection.archive()" :disabled="!selectedEmailsCount">Archive</button>
+      <button @click="handleArchive(screen)" :disabled="!selectedEmailsCount">
+        {{ screen === "archive" ? "Unarchive" : "Archive" }}
+      </button>
     </span>
   </div>
 </template>
 
 <script>
-import useEmailSelection from "../composables/use-email-selection";
 import { computed } from "vue";
+import useEmailSelection from "../composables/use-email-selection";
 
 export default {
   props: {
+    screen: {
+      type: String,
+      required: true,
+    },
+
     emails: {
       type: Array,
       required: true,
     },
   },
 
-  setup({ emails }) {
+  setup(props) {
     const emailSelection = useEmailSelection();
 
     const selectedEmailsCount = computed(() => emailSelection.emails.size);
-    const totalEmailCount = computed(() => emails.length);
+    const totalEmailCount = computed(() => props.emails.length);
 
-    const allEmailsSelected = computed(() => totalEmailCount.value == selectedEmailsCount.value);
+    const allEmailsSelected = computed(() => selectedEmailsCount.value === totalEmailCount.value);
     const someEmailsSelected = computed(
       () => selectedEmailsCount.value > 0 && selectedEmailsCount.value < totalEmailCount.value
     );
@@ -57,17 +64,28 @@ export default {
     const bulkSelect = () => {
       if (allEmailsSelected.value) {
         emailSelection.clear();
-      } else {
-        emailSelection.addMultiple(emails);
+        return;
       }
+
+      emailSelection.addMultiple(props.emails);
+    };
+
+    const handleArchive = (screen) => {
+      if (screen === "archive") {
+        emailSelection.unarchive();
+        return;
+      }
+
+      emailSelection.archive();
     };
 
     return {
       emailSelection,
-      bulkSelect,
       selectedEmailsCount,
       allEmailsSelected,
       someEmailsSelected,
+      bulkSelect,
+      handleArchive,
     };
   },
 };

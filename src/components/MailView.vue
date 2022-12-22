@@ -2,7 +2,7 @@
   <div class="email-display">
     <div>
       <button @click="toggleArchive">
-        {{ email.archive ? "Move to Inbox (e)" : "Archive (e)" }}
+        {{ email.archived ? "Move to Inbox (e)" : "Archive (e)" }}
       </button>
 
       <button @click="toggleRead">
