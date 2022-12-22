@@ -1,4 +1,8 @@
 <template>
+  <h1>
+    {{ emailSelection.emails.size }} emails selected
+  </h1>
+
   <table class="mail-table">
     <tr
       v-for="email in unArchivedEmails"
@@ -10,7 +14,11 @@
       }"
     >
       <td>
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          @click.stop="emailSelection.toggle(email)"
+          :selected="emailSelection.emails.has(email)"
+        />
       </td>
       <td>
         <p>{{ email.from }}</p>
@@ -36,7 +44,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import axios from "axios";
 
 import MailView from "./MailView.vue";
@@ -47,10 +55,24 @@ export default {
 
   async setup() {
     const res = await axios.get("/assets/dummy-data/dummy-data.json");
+
     const emails = ref(res.data);
     const openedEmail = ref(null);
 
-    return { emails, openedEmail };
+    const selectedEmails = reactive(new Set());
+
+    const emailSelection = {
+      emails: selectedEmails,
+      toggle(email) {
+        if (selectedEmails.has(email)) {
+          selectedEmails.delete(email);
+        } else {
+          selectedEmails.add(email);
+        }
+      },
+    };
+
+    return { emails, openedEmail, emailSelection };
   },
 
   computed: {
